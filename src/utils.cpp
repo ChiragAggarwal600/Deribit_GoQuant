@@ -1,5 +1,5 @@
-#include "utils.h"
-#include "config.h"
+#include "utils.hpp"
+#include "config.hpp"
 #include <curl/curl.h>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -11,13 +11,13 @@ namespace UtilityNamespace {
         std::string payload = "{\"jsonrpc\":\"2.0\", \"method\":\"public/auth\", \"params\":{\"grant_type\":\"client_credentials\", \"client_id\":\"" + API_KEY + "\", \"client_secret\":\"" + SECRET_KEY + "\"}, \"id\":1}";
         
         // POST request to authenticate
-        std::string response = UtilityNamespace::sendPostRequest(url, payload);
+        std::string response = sendPostRequest(url, payload);
         
         // parsing the response to get the access token
         auto json_response = nlohmann::json::parse(response);
         if (json_response.contains("result") && json_response["result"].contains("access_token")) {
             std::string access_token = json_response["result"]["access_token"];
-            std::cout << "Access Token: " << access_token << std::endl;
+            // std::cout << "Access Token: " << access_token << std::endl;
             return access_token;
         } else {
             std::cerr << "Authentication failed. Response: " << response << std::endl;
@@ -32,7 +32,7 @@ namespace UtilityNamespace {
         return newLength;
     }
 
-    std::string UtilityNamespace::sendPostRequestWithAuth(const std::string& url, const std::string& payload, const std::string& authHeader) {
+    std::string sendPostRequestWithAuth(const std::string& url, const std::string& payload, const std::string& authHeader) {
         CURL* curl;
         CURLcode res;
         std::string readBuffer;
@@ -63,7 +63,7 @@ namespace UtilityNamespace {
     }
 
     // function to perform HTTP POST requests
-    std::string UtilityNamespace::sendPostRequest(const std::string& url, const std::string& payload) {
+    std::string sendPostRequest(const std::string& url, const std::string& payload) {
         CURL* curl;
         CURLcode res;
         std::string readBuffer;
@@ -118,6 +118,19 @@ namespace UtilityNamespace {
         curl_global_cleanup();
 
         return readBuffer;
+    }
+    // function to get order book
+    std::string getOrderBook(const std::string& symbol) {
+        std::string url = "https://test.deribit.com/api/v2/public/get_order_book?instrument_name=" + symbol;
+        return sendGetRequest(url); // Assuming sendGetRequest is a function that sends a GET request and returns the response as a string
+    }
+    std::string getInstruments() {
+        std::string url = "https://test.deribit.com/api/v2/public/get_instruments";
+        return sendGetRequest(url); // Sends a GET request to retrieve instruments
+    }
+    std::string getInstrumentOrderbook(const std::string& instrumentName) {
+        std::string url = "https://test.deribit.com/api/v2/public/get_order_book?instrument_name=" + instrumentName;
+        return sendGetRequest(url); // Sends a GET request to retrieve the order book for the specified instrument
     }
 
     // function for logging
