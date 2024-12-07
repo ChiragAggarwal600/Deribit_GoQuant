@@ -41,7 +41,4 @@ For detailed documentation, refer to [here](https://drive.google.com/file/d/1BYz
 
 ---
 
-## 📄 **License**
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
