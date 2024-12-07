@@ -189,26 +189,26 @@ int main() {
         // std::cout << "Order cancelled successfully!" << std::endl;
 
         // // Start WebSocket server for streaming orderbook
-        // WebSocketServer wsServer;
-        // std::thread serverThread([&wsServer]() {
-        //     wsServer.startServer(9002);
-        // });
+        WebSocketServer wsServer;
+        std::thread serverThread([&wsServer]() {
+            wsServer.startServer(9002);
+        });
 
-        // // Start a thread to fetch and stream orderbook updates
-        // std::thread orderbookThread(fetchAndStreamOrderbook, std::ref(wsServer));
+        // Start a thread to fetch and stream orderbook updates
+        std::thread orderbookThread(fetchAndStreamOrderbook, std::ref(wsServer));
 
-        // // Start WebSocket client in a separate thread to connect to the server
-        // std::thread clientThread(startWebSocketClient);
+        // Start WebSocket client in a separate thread to connect to the server
+        std::thread clientThread(startWebSocketClient);
 
-        // // Wait for the orderbook thread to finish (it won't in this example)
-        // std::cout << "Press Enter to stop..." << std::endl;
-        // std::cin.get();
+        // Wait for the orderbook thread to finish (it won't in this example)
+        std::cout << "Press Enter to stop..." << std::endl;
+        std::cin.get();
 
-        // // Signal the orderbook thread to stop gracefully
-        // running = false;
-        // orderbookThread.join();  // Wait for the thread to finish
-        // clientThread.join(); // Wait for the WebSocket client to finish
-        // serverThread.join(); // Wait for the server thread to finish
+        // Signal the orderbook thread to stop gracefully
+        running = false;
+        orderbookThread.join();  // Wait for the thread to finish
+        clientThread.join(); // Wait for the WebSocket client to finish
+        serverThread.join(); // Wait for the server thread to finish
         } catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
